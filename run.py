@@ -125,3 +125,5 @@ for it in range(1000):
     alu_out.rename(columns={14:'region', 0:'count'}, inplace=True)
     comb_df = pd.concat([l1_out, alu_out])
     tot_df = pd.concat([tot_df, comb_df])
+
+tot_df.to_csv('/cndd3/dburrows/DATA/me_polymorphisms/analysis/shuffle_enrichment.csv', sep='\t')
