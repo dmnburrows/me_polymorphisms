@@ -66,9 +66,9 @@ ratio[(het_bool == False) & (hom_bool==True)] = -1*np.inf
 comb_df['het_over_hom'] = ratio
 # label as majority het or hom, if >2x
 genotype = np.empty(len(comb_df)).astype(str)
-genotype[ratio > 2] = 'het'
-genotype[ratio < 0.5] = 'hom'
-genotype[(ratio < 2) & (ratio > 0.5)] = 'mixed'
+genotype[ratio >= 2] = 'het'
+genotype[ratio <= 0.5] = 'hom'
+genotype[(ratio <= 2) & (ratio >= 0.5)] = 'mixed'
 genotype[np.isnan(ratio)] = 'NaN'
 comb_df['genotype'] = genotype
 #label as truncated or full length
@@ -77,9 +77,10 @@ l1_mask = comb_df['class'] == 'l1'
 trunc[l1_mask & (comb_df['length'] > 5500)] = 'full_length'
 trunc[l1_mask & (comb_df['length'] <= 5500)] = 'truncated'
 alu_mask = comb_df['class'] == 'alu'
-trunc[alu_mask & (comb_df['length'] > 250)] = 'full_length'
-trunc[alu_mask & (comb_df['length'] <= 250)] = 'truncated'
+trunc[alu_mask & (comb_df['length'] > 280)] = 'full_length'
+trunc[alu_mask & (comb_df['length'] <= 280)] = 'truncated'
 comb_df['insertion_category'] = trunc
+
 
 #bedconvert and load annotations
 alu_bt = pybedtools.BedTool.from_dataframe(alu_df)
@@ -190,4 +191,5 @@ for it in range(n_iter):
     alumerged_df['class'] = 'alu'
     alumerged_df['iteration'] = it
     tot_df = pd.concat([tot_df, pd.concat([l1merged_df, alumerged_df])])
+
 tot_df.to_csv('/cndd3/dburrows/DATA/me_polymorphisms/analysis/shuffle_enrichment.csv', sep='\t')
